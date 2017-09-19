@@ -1,23 +1,28 @@
 package lawisAddonDqr2.event;
 
-import java.util.Random;
-
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import dqr.api.Items.DQMiscs;
 import dqr.entity.mobEntity.DqmMobBase;
+import dqr.entity.petEntity.DqmPetBase;
 import lawisAddonDqr2.config.Lad2ConfigCore;
 import lawisAddonDqr2.event.action.Lad2ActionBreakBlock;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.DamageSource;
+import lawisAddonDqr2.event.action.Lad2ActionMove;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.World;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 
 public class Lad2EventHandler {
+	/* 追加行動 */
+
 	/*
 	 * プレイヤーがEntityに攻撃した時に呼び出される処理
 	 * MinecraftForge.EVENT_BUS.registerで呼び出されるので、staticを付けずに@SubscribeEventを付ける
 	 *
-	 * コンフィグ：追加行動がオンの時に、プレイヤーに攻撃された敵が周囲のブロックを破壊するようになる。
+	 * コンフィグ：追加行動がオン⇒プレイヤーに攻撃されたDQRmodのモンスターが周囲のブロックを破壊。
 	 */
 	@SubscribeEvent
 	public void PlayerAttackEvent(AttackEntityEvent event) {
@@ -40,7 +45,7 @@ public class Lad2EventHandler {
 	 * Entityがダメージを受けた時に呼び出される処理
 	 * MinecraftForge.EVENT_BUS.registerで呼び出されるので、staticを付けずに@SubscribeEventを付ける
 	 *
-	 * コンフィグ：追加行動がオンになるときに、DQRの敵が溶岩などからダメージを受け続けないように移動する。
+	 * コンフィグ：追加行動がオン⇒DQRmodの敵が溶岩などからダメージを受け続けないように移動。
 	 */
 	@SubscribeEvent
 	public void EnemyHurtEvent(LivingHurtEvent event) {
@@ -55,32 +60,43 @@ public class Lad2EventHandler {
 
 		// DQRmodの敵がダメージを受けた時
 		if ((event.entityLiving instanceof DqmMobBase)) {
-			EntityLivingBase enemy = event.entityLiving;
-
-			Random rand = new Random();
-			double mY = rand.nextDouble();
-			if (event.entityLiving.posY <= 30) mY += 0.2D;
-			if (mY < 0.5D) mY = 0.5D;
-
-			// 炎系のダメージを受けた時
-			if ((event.source == DamageSource.inFire) || (event.source == DamageSource.lava)) {
-				enemy.motionY = mY;
-				enemy.motionX += rand.nextDouble() *1 -0.5D;
-				enemy.motionZ += rand.nextDouble() *1 -0.5D;
-			}
-
-			// サボテンからダメージを受けた時
-			if (event.source == DamageSource.cactus) {
-				enemy.motionX += rand.nextDouble() *2 -1;
-				enemy.motionZ += rand.nextDouble() *2 -1;
-			}
-
-			// 壁の中で窒息した時
-			if (event.source == DamageSource.inWall) {
-				enemy.motionY = mY;
-				enemy.motionX += rand.nextDouble() *2 -1;
-				enemy.motionZ += rand.nextDouble() *2 -1;
-			}
+			Lad2ActionMove.enemyHurtMove(event.entityLiving, event.source);
 		}
+	}
+
+	/* 追加報酬 */
+	/*
+	 * Entityがダメージを受けた時に呼び出される処理
+	 * MinecraftForge.EVENT_BUS.registerで呼び出されるので、staticを付けずに@SubscribeEventを付ける
+	 *
+	 * コンフィグ：追加報酬がオン⇒DQRmodのペットがDQRmodの敵を倒したときに報酬追加。
+	 */
+	@SubscribeEvent
+	public void EnemyAdditionalDrops(LivingDropsEvent event){
+		// ピースフルの時、このイベントは動作しない
+		if (event.entity.worldObj.difficultySetting == EnumDifficulty.PEACEFUL) return;
+
+		// コンフィグ：追加報酬がオフの時、このイベントは動作しない
+		if (!Lad2ConfigCore.isConfigReward) return;
+
+		// 死亡したEntityが、DQRmodの敵の場合
+    	if (event.entityLiving instanceof DqmMobBase) {
+    		// 倒したEntityが、DQRmodのペットの場合
+    		if (event.source.getSourceOfDamage() instanceof DqmPetBase) {
+    			World world = event.entityLiving.worldObj; // EntityItemの第1引数
+    	        double x = event.entityLiving.posX; // EntityItemの第2引数
+    	        double y = event.entityLiving.posY; // EntityItemの第3引数
+    	        double z = event.entityLiving.posZ; // EntityItemの第4引数
+
+    	        // 100分の1の確率で
+    	        int r100 = new java.util.Random().nextInt(100);
+    	        if (r100 == 0) {
+    	        	// 「せかいじゅの葉」を落とす
+    	        	if(!event.entityLiving.worldObj.isRemote) {
+        	        	event.drops.add(new EntityItem(world, x, y, z, new ItemStack(DQMiscs.itemSekaijunoha)));
+        	        }
+    	        }
+    		}
+    	}
 	}
 }
