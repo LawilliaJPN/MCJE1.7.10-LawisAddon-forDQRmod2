@@ -18,15 +18,15 @@ public class Lad2ConfigCore {
 
 	// ACTION 追加行動
 	private static final String ACTION = GENERAL + ".Action";
-	public static boolean isConfigAction = false;
+	public static boolean isConfigAction = true;
 
 	// SPAWN 追加スポーン
 	private static final String SPAWN = GENERAL + ".Spawn";
-	public static boolean isConfigSpawn = false;
+	public static boolean isConfigSpawn = true;
 
 	// REWARD 追加報酬
 	private static final String REWARD = GENERAL + ".Reward";
-	public static boolean isConfigReward = false;
+	public static boolean isConfigReward = true;
 
 
 	/*
@@ -48,11 +48,19 @@ public class Lad2ConfigCore {
 	private static void initConfig() {
 		/* GENERAL Mod全般の設定 */
 		cfg.addCustomCategoryComment(GENERAL, "The general settings of  " + LawisAddonDQR02.MOD_NAME + ".");
-		cfg.setCategoryLanguageKey(GENERAL, "config.lad.category.general");
+		cfg.setCategoryLanguageKey(GENERAL, "config.lad2.category.general");
 
-		// ACTION 負荷軽減
+		// ACTION 追加行動
 		cfg.addCustomCategoryComment(ACTION, "The setting of Additonal Action.");
-		cfg.setCategoryLanguageKey(ACTION, "config.lad.category.action");
+		cfg.setCategoryLanguageKey(ACTION, "config.lad2.category.action");
+
+		// SPAWN 追加スポーン
+		cfg.addCustomCategoryComment(SPAWN, "The setting of Additonal Spawn.");
+		cfg.setCategoryLanguageKey(SPAWN, "config.lad2.category.spawn");
+
+		// REWARD 追加報酬
+		cfg.addCustomCategoryComment(REWARD, "The setting of Additonal Reward.");
+		cfg.setCategoryLanguageKey(REWARD, "config.lad2.category.reward");
 	}
 
 	/*
@@ -60,8 +68,12 @@ public class Lad2ConfigCore {
 	 */
 	public static void syncConfig() {
 		/* 変数への反映 */
-		// REDUCTION 負荷軽減
-		isConfigAction = cfg.getBoolean("Workload Reduction", ACTION, isConfigAction, "When this setting is true, large rooms become smaller for workload reduction.", "config.lad.category.action");
+		// ACTION 追加行動
+		isConfigAction = cfg.getBoolean("Additional Action", ACTION, isConfigAction, "When this setting is true, actions are added to the DQRmod.", "config.lad2.category.action");
+		// SPAWN 追加スポーン
+		isConfigSpawn = cfg.getBoolean("Additional Spawn", SPAWN, isConfigSpawn, "When this setting is true, requirement to spawn are added to the DQRmod.", "config.lad2.category.spawn");
+		// REWARD 追加報酬
+		isConfigReward = cfg.getBoolean("Additional Reward", REWARD, isConfigReward, "When this setting is true, rewards are added to the DQRmod.", "config.lad2.category.reward");
 
 		/* コンフィグファイルの保存 */
 		cfg.save();

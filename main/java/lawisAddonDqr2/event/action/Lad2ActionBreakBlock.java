@@ -30,7 +30,8 @@ public class Lad2ActionBreakBlock {
 		if (enemy.posZ < 0) z -= 1;
 
 		// 敵の攻撃力の高さ
-		int breakPW = (int)(enemy.DqmMobPW *0.1D) +1;
+		int breakPW = (int)(enemy.DqmMobPW *0.05D) +1;
+		if (breakPW > 10) breakPW = 10;
 		int breakRange = (breakPW /4) *2 +3;
 
 		for (int i = 1; i <= breakPW; i++) {

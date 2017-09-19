@@ -1,0 +1,6 @@
+
+// コンフィグ
+config.lad2.category.general=全般
+config.lad2.category.action=追加行動
+config.lad2.category.spawn=追加スポーン
+config.lad2.category.miningfatigue=追加報酬

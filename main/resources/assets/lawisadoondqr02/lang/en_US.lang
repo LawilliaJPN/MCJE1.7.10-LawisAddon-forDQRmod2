@@ -1,0 +1,6 @@
+
+// Config
+config.lad2.category.general=General
+config.lad2.category.action=Additional Action
+config.lad2.category.spawn=Additional Mob-Spawn
+config.lad2.category.miningfatigue=Additional Reward
