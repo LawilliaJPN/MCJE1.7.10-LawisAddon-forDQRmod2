@@ -28,6 +28,9 @@ public class Lad2ConfigCore {
 	private static final String REWARD = GENERAL + ".Reward";
 	public static boolean isConfigReward = true;
 
+	// CHAT 追加報酬
+	private static final String CHAT = GENERAL + ".Chat";
+	public static boolean isConfigChat = true;
 
 	/*
 	 * preInitにて呼び出すメソッド。
@@ -61,6 +64,10 @@ public class Lad2ConfigCore {
 		// REWARD 追加報酬
 		cfg.addCustomCategoryComment(REWARD, "The setting of Additonal Reward.");
 		cfg.setCategoryLanguageKey(REWARD, "config.lad2.category.reward");
+
+		// CHAT チャット表示
+		cfg.addCustomCategoryComment(CHAT, "The setting of Display Chat.");
+		cfg.setCategoryLanguageKey(CHAT, "config.lad2.category.chat");
 	}
 
 	/*
@@ -74,6 +81,8 @@ public class Lad2ConfigCore {
 		isConfigSpawn = cfg.getBoolean("Additional Spawn", SPAWN, isConfigSpawn, "When this setting is true, requirement to spawn are added to the DQRmod.", "config.lad2.category.spawn");
 		// REWARD 追加報酬
 		isConfigReward = cfg.getBoolean("Additional Reward", REWARD, isConfigReward, "When this setting is true, rewards are added to the DQRmod.", "config.lad2.category.reward");
+		// CHAT チャット表示
+		isConfigChat = cfg.getBoolean("Display Chat", CHAT, isConfigChat, "When this setting is true, this mod display chat.", "config.lad2.category.chat");
 
 		/* コンフィグファイルの保存 */
 		cfg.save();

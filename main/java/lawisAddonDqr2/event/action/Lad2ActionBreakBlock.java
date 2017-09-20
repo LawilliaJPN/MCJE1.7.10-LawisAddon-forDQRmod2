@@ -4,6 +4,7 @@ import java.util.Random;
 
 import dqr.api.Blocks.DQBlocks;
 import dqr.entity.mobEntity.DqmMobBase;
+import lawisAddonDqr2.config.Lad2ConfigCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.player.EntityPlayer;
@@ -59,8 +60,11 @@ public class Lad2ActionBreakBlock {
 						world.setBlockToAir(x, y, z);
 						// 効果音
 						world.playSoundAtEntity(enemy, strSound, 1.0F, 1.0F);
-						// チャットで報告
-						player.addChatMessage(new ChatComponentTranslation(enemy.getCommandSenderName() + "が" + strBlock + "を破壊した"));
+
+						// チャットで報告(コンフィグがオンならば)
+						if (Lad2ConfigCore.isConfigChat) {
+							player.addChatMessage(new ChatComponentTranslation(enemy.getCommandSenderName() + "が" + strBlock + "を破壊した"));
+						}
 					}
 				}
 			}
