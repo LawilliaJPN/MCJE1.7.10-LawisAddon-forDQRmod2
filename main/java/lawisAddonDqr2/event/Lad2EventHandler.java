@@ -7,13 +7,17 @@ import dqr.entity.petEntity.DqmPetBase;
 import lawisAddonDqr2.config.Lad2ConfigCore;
 import lawisAddonDqr2.event.action.Lad2ActionBreakBlock;
 import lawisAddonDqr2.event.action.Lad2ActionMove;
+import lawisAddonDqr2.event.spawn.Lad2SpawnFromBlock;
+import lawisAddonDqr2.event.spawn.Lad2SpawnFromEntity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 public class Lad2EventHandler {
 	/* 追加行動 */
@@ -64,7 +68,44 @@ public class Lad2EventHandler {
 		}
 	}
 
+	/* 追加スポーン */
+
+	/*
+	 * ブロックが破壊された時に呼び出される処理
+	 * MinecraftForge.EVENT_BUS.registerで呼び出されるので、staticを付けずに@SubscribeEventを付ける
+	 *
+	 * コンフィグ：追加スポーンがオン⇒特定ブロックを破壊した時に一定確率で敵がスポーンする。
+	 */
+	@SubscribeEvent
+	public void BreakBlockEvent(BreakEvent event) {
+		// ピースフルの時、このイベントは動作しない
+		if (event.world.difficultySetting == EnumDifficulty.PEACEFUL) return;
+
+		// コンフィグ：追加スポーンがオフの時、このイベントは動作しない
+		if (!Lad2ConfigCore.isConfigSpawn) return;
+
+		Lad2SpawnFromBlock.SpawnEnemyFromBlock(event.world, event.getPlayer(), event.block, event.x, event.y, event.z);
+	}
+
+	/*
+	 * 敵が死亡したときに呼び出される処理
+	 * MinecraftForge.EVENT_BUS.registerで呼び出されるので、staticを付けずに@SubscribeEventを付ける
+	 *
+	 * コンフィグ：追加スポーンがオン⇒特定ブロックを破壊した時に一定確率で敵がスポーンする。
+	 */
+	@SubscribeEvent
+	public void EnemyDeathEvent(LivingDeathEvent event) {
+		// ピースフルの時、このイベントは動作しない
+		if (event.entityLiving.worldObj.difficultySetting == EnumDifficulty.PEACEFUL) return;
+
+		// コンフィグ：追加スポーンがオフの時、このイベントは動作しない
+		if (!Lad2ConfigCore.isConfigSpawn) return;
+
+		Lad2SpawnFromEntity.SpawnEnemyFromEntity(event.entityLiving.worldObj, event.entityLiving, (int)event.entityLiving.posX, (int)event.entityLiving.posY, (int)event.entityLiving.posZ);
+	}
+
 	/* 追加報酬 */
+
 	/*
 	 * Entityがダメージを受けた時に呼び出される処理
 	 * MinecraftForge.EVENT_BUS.registerで呼び出されるので、staticを付けずに@SubscribeEventを付ける
