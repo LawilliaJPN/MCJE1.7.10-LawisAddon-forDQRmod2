@@ -9,10 +9,12 @@ import lawisAddonDqr2.event.action.Lad2ActionBreakBlock;
 import lawisAddonDqr2.event.action.Lad2ActionMove;
 import lawisAddonDqr2.event.spawn.Lad2SpawnFromBlock;
 import lawisAddonDqr2.event.spawn.Lad2SpawnFromEntity;
+import lawisAddonDqr2.event.spawn.Lad2SpawnFromItem;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -102,6 +104,23 @@ public class Lad2EventHandler {
 		if (!Lad2ConfigCore.isConfigSpawn) return;
 
 		Lad2SpawnFromEntity.SpawnEnemyFromEntity(event.entityLiving.worldObj, event.entityLiving, (int)event.entityLiving.posX, (int)event.entityLiving.posY, (int)event.entityLiving.posZ);
+	}
+
+	/*
+	 * EntityItemがデスポーンする時に呼び出される処理
+	 * MinecraftForge.EVENT_BUS.registerで呼び出されるので、staticを付けずに@SubscribeEventを付ける
+	 *
+	 * コンフィグ：追加スポーンがオン⇒特定ブロックを破壊した時に一定確率で敵がスポーンする。
+	 */
+	@SubscribeEvent
+	public void ItemDespawnEvent(ItemExpireEvent event) {
+		// ピースフルの時、このイベントは動作しない
+		if (event.entityItem.worldObj.difficultySetting == EnumDifficulty.PEACEFUL) return;
+
+		// コンフィグ：追加スポーンがオフの時、このイベントは動作しない
+		if (!Lad2ConfigCore.isConfigSpawn) return;
+
+		Lad2SpawnFromItem.SpawnEnemyFromItem(event.entityItem.worldObj, event.entityItem, (int)event.entityItem.posX, (int)event.entityItem.posY, (int)event.entityItem.posZ);
 	}
 
 	/* 追加報酬 */

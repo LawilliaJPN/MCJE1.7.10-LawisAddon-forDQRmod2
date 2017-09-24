@@ -21,7 +21,7 @@ import lawisAddonDqr2.config.Lad2InfoCore;
 public class LawisAddonDQR02 {
 	public static final String MOD_ID = "LawisAddonDQR02";
 	public static final String MOD_NAME = "Lawi's Addon for DQRmod 02";
-	public static final String MOD_VERSION = "0.1.0";
+	public static final String MOD_VERSION = "0.0.3";
 	public static Logger logger = LogManager.getLogger("LawisAddonDQR02");
 
 	@Metadata(MOD_ID)

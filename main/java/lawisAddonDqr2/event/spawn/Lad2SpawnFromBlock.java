@@ -3,9 +3,13 @@ package lawisAddonDqr2.event.spawn;
 import java.util.Random;
 
 import dqr.entity.mobEntity.monsterDay.DqmEntityKirikabuobake;
+import dqr.entity.mobEntity.monsterDay.DqmEntitySabotenboru;
 import dqr.entity.mobEntity.monsterHell.DqmEntityDarkdoriado;
+import dqr.entity.mobEntity.monsterNight.DqmEntityDansunidoru;
+import dqr.entity.mobEntity.monsterTensei.DqmEntitySabotengold;
 import lawisAddonDqr2.config.Lad2ConfigCore;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockCactus;
 import net.minecraft.block.BlockLog;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.IEntityLivingData;
@@ -56,6 +60,26 @@ public class Lad2SpawnFromBlock {
 				else if (r == 10) entity = new DqmEntityKirikabuobake(world);
 			}
 
+		} else if (block instanceof BlockCactus) {
+			// サボテンを壊した時
+
+			if (dif == 1) {
+				// 昼⇒20分の1の確率で「サボテンボール」
+				int r = rand.nextInt(20);
+				if (r == 0) entity = new DqmEntitySabotenboru(world);
+
+			} else if (dif == 2) {
+				// 夜⇒2分の1の確率で「サボテンボール」、20分の1の確率で「ダンスニードル」
+				int r = rand.nextInt(20);
+				if (r < 10) entity = new DqmEntitySabotenboru(world);
+				else if (r == 10) entity = new DqmEntityDansunidoru(world);
+
+			} else if (dif == 3) {
+				// ネザー等⇒2分の1の確率で「ダンスニードル」、20分の1の確率で「サボテンゴールド」
+				int r = rand.nextInt(20);
+				if (r < 10) entity = new DqmEntityDansunidoru(world);
+				else if (r == 10) entity = new DqmEntitySabotengold(world);
+			}
 		}
 
 
