@@ -19,7 +19,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 public class Lad2SpawnFromBlock {
-	public static void SpawnEnemyFromBlock (World world, EntityPlayer player, Block block, int x, int y, int z) {
+	public static void spawnEnemy (World world, EntityPlayer player, Block block, int x, int y, int z) {
 		Random rand = new Random();
 		EntityLiving entity = null;
 

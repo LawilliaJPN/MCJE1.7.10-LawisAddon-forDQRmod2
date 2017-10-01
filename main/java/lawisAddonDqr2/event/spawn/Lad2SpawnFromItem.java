@@ -18,7 +18,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 public class Lad2SpawnFromItem {
-	public static void SpawnEnemyFromItem (World world, EntityItem enItem, int x, int y, int z) {
+	public static void spawnEnemy (World world, EntityItem enItem, int x, int y, int z) {
 		Random rand = new Random();
 		EntityLiving entity = null;
 		Item item = enItem.getEntityItem().getItem();

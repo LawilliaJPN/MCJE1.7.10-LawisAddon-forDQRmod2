@@ -7,6 +7,7 @@ import dqr.entity.petEntity.DqmPetBase;
 import lawisAddonDqr2.config.Lad2ConfigCore;
 import lawisAddonDqr2.event.action.Lad2ActionBreakBlock;
 import lawisAddonDqr2.event.action.Lad2ActionMove;
+import lawisAddonDqr2.event.spawn.Lad2SpawnAsASubstituteForEntity;
 import lawisAddonDqr2.event.spawn.Lad2SpawnFromBlock;
 import lawisAddonDqr2.event.spawn.Lad2SpawnFromEntity;
 import lawisAddonDqr2.event.spawn.Lad2SpawnFromItem;
@@ -14,6 +15,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -86,7 +88,7 @@ public class Lad2EventHandler {
 		// コンフィグ：追加スポーンがオフの時、このイベントは動作しない
 		if (!Lad2ConfigCore.isConfigSpawn) return;
 
-		Lad2SpawnFromBlock.SpawnEnemyFromBlock(event.world, event.getPlayer(), event.block, event.x, event.y, event.z);
+		Lad2SpawnFromBlock.spawnEnemy(event.world, event.getPlayer(), event.block, event.x, event.y, event.z);
 	}
 
 	/*
@@ -103,7 +105,7 @@ public class Lad2EventHandler {
 		// コンフィグ：追加スポーンがオフの時、このイベントは動作しない
 		if (!Lad2ConfigCore.isConfigSpawn) return;
 
-		Lad2SpawnFromEntity.SpawnEnemyFromEntity(event.entityLiving.worldObj, event.entityLiving, (int)event.entityLiving.posX, (int)event.entityLiving.posY, (int)event.entityLiving.posZ);
+		Lad2SpawnFromEntity.spawnEnemy(event.entityLiving.worldObj, event.entityLiving, (int)event.entityLiving.posX, (int)event.entityLiving.posY, (int)event.entityLiving.posZ);
 	}
 
 	/*
@@ -120,7 +122,24 @@ public class Lad2EventHandler {
 		// コンフィグ：追加スポーンがオフの時、このイベントは動作しない
 		if (!Lad2ConfigCore.isConfigSpawn) return;
 
-		Lad2SpawnFromItem.SpawnEnemyFromItem(event.entityItem.worldObj, event.entityItem, (int)event.entityItem.posX, (int)event.entityItem.posY, (int)event.entityItem.posZ);
+		Lad2SpawnFromItem.spawnEnemy(event.entityItem.worldObj, event.entityItem, (int)event.entityItem.posX, (int)event.entityItem.posY, (int)event.entityItem.posZ);
+	}
+
+	/*
+	 * Entityがスポーンする時に呼び出される処理
+	 * MinecraftForge.EVENT_BUS.registerで呼び出されるので、staticを付けずに@SubscribeEventを付ける
+	 *
+	 * コンフィグ：追加スポーンがオン⇒特定ブロックを破壊した時に一定確率で敵がスポーンする。
+	 */
+	@SubscribeEvent
+	public void EnemySpawnEvent(EntityJoinWorldEvent event) {
+		// ピースフルの時、このイベントは動作しない
+		if (event.entity.worldObj.difficultySetting == EnumDifficulty.PEACEFUL) return;
+
+		// コンフィグ：追加スポーンがオフの時、このイベントは動作しない
+		if (!Lad2ConfigCore.isConfigSpawn) return;
+
+		Lad2SpawnAsASubstituteForEntity.spawnEnemy(event.entity.worldObj, event.entity, (int)event.entity.posX, (int)event.entity.posY, (int)event.entity.posZ);
 	}
 
 	/* 追加報酬 */
